@@ -1,7 +1,10 @@
 var express = require('express');
 var app = express();
+var bodyParser = require('body-parser');
 
 var messages = [{text: 'some text', owner: 'Tim'},{text: 'other message', owner: 'Jane'}];
+
+app.use(bodyParser.json());
 
 app.use((req, res, next) => {
     res.header("Access-Control-Allow-Origin", "*");
@@ -9,8 +12,17 @@ app.use((req, res, next) => {
     next();
 })
 
-app.get('/messages', (req, res) => {
+var api = express.Router();
+
+api.get('/messages', (req, res) => {
     res.json(messages);
 })
 
-app.listen(1234);
+api.post('/messages', (req, res) => {
+    messages.push(req.body);
+    res.sendStatus(200);
+})
+
+app.use('/api', api)
+
+app.listen(63145);
